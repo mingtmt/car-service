@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:alpine
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=car-service
+    ports:
+      - 5432:5432
+    volumes:
+      - car-service-data:/var/lib/postgresql/data
+
+volumes:
+  car-service-data:
