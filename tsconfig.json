@@ -17,6 +17,7 @@
     "paths": {
       "@generated/*": ["generated/*"],
       "@src/*": ["src/*"],
+      "@prisma/*": ["src/prisma/*"],
       "@modules/*": ["src/modules/*"],
       "@common/*": ["src/common/*"]
     },

@@ -15,7 +15,11 @@ datasource db {
 }
 
 model Customer {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
+  id Int @id @default(autoincrement())
   name String
+  phone String @unique
+  address String?
+  plateNumber String? 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
