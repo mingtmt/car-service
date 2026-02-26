@@ -1,4 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Query,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 
@@ -9,5 +19,28 @@ export class CustomersController {
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customersService.create(createCustomerDto);
+  }
+
+  @Get()
+  findAll(@Query('q') query?: string) {
+    return this.customersService.findAll(query);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.customersService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCustomerDto: CreateCustomerDto,
+  ) {
+    return this.customersService.update(id, updateCustomerDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.customersService.remove(id);
   }
 }

@@ -53,6 +53,6 @@ import { CustomersModule } from './modules/customers/customers.module';
     CustomersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService],
 })
 export class AppModule {}
