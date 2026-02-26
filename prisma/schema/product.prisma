@@ -1,0 +1,17 @@
+enum ProductType {
+  PART
+  SERVICE
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+  code String @unique
+  name String
+  price Float
+  costPrice Float?
+  stock Int @default(0)
+  unit String
+  type ProductType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

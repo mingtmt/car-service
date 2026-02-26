@@ -1,0 +1,9 @@
+model Customer {
+  id Int @id @default(autoincrement())
+  name String
+  phone String @unique
+  address String?
+  plateNumber String? 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
