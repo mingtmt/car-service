@@ -5,9 +5,9 @@ import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { CustomersModule } from './modules/customers/customers.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -51,6 +51,7 @@ import { CustomersModule } from './modules/customers/customers.module';
     }),
     PrismaModule,
     CustomersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

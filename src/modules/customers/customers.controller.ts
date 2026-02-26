@@ -3,11 +3,11 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
+  Delete,
   Query,
   Param,
   ParseIntPipe,
-  Patch,
-  Delete,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';

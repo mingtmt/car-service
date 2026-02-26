@@ -13,21 +13,17 @@ export class CustomersService {
     });
   }
 
-  async findAll(searchQuery?: string) {
-    if (searchQuery) {
-      return this.prisma.customer.findMany({
-        where: {
-          OR: [
-            { name: { contains: searchQuery, mode: 'insensitive' } },
-            { phone: { contains: searchQuery } },
-            { plateNumber: { contains: searchQuery, mode: 'insensitive' } },
-          ],
-        },
-        orderBy: { createdAt: 'desc' },
-      });
-    }
-
+  async findAll(query?: string) {
     return this.prisma.customer.findMany({
+      where: {
+        ...(query && {
+          OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            { phone: { contains: query } },
+            { plateNumber: { contains: query, mode: 'insensitive' } },
+          ],
+        }),
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
