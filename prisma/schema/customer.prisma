@@ -4,6 +4,7 @@ model Customer {
   phone String @unique
   address String?
   plateNumber String? 
+  orders Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

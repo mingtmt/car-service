@@ -12,6 +12,7 @@ model Product {
   stock Int @default(0)
   unit String
   type ProductType
+  orderItems OrderItem[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
