@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma, ProductType } from '@generated/prisma/client';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @Injectable()
 export class OrdersService {
@@ -79,5 +80,63 @@ export class OrdersService {
 
       return order;
     });
+  }
+
+  async updateStatus(id: number, updateOrderStatusDto: UpdateOrderStatusDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.findUnique({
+        where: { id },
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+            },
+          },
+        }
+      })
+
+      if (!order) {
+        throw new NotFoundException(`Order ${id} not found`);
+      }
+
+      if (updateOrderStatusDto.status === 'CONFIRMED') {
+        if (order.status !== 'QUOTE') {
+          throw new BadRequestException('Order status is not QUOTE');
+        }
+      }
+
+      if (updateOrderStatusDto.status === 'COMPLETED') {
+        if (order.status === 'COMPLETED') {
+          throw new BadRequestException('Order status is already COMPLETED');
+        }
+        if (order.status === 'CANCELLED') {
+          throw new BadRequestException('Order status is CANCELLED');
+        }
+
+        for (const item of order.orderItems) {
+          if (item.product.type === ProductType.PART) {
+            if (item.quantity > item.product.stock) {
+              throw new BadRequestException(
+                `Product ${item.product.name} is out of stock`,
+              );
+            }
+
+            await tx.product.update({
+              where: { id: item.productId },
+              data: {
+                stock: {
+                  decrement: item.quantity,
+                },
+              },
+            });
+          }
+        }
+      }
+
+      return tx.order.update({
+        where: { id },
+        data: { status: updateOrderStatusDto.status },
+      });
+    })
   }
 }

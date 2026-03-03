@@ -7,7 +7,7 @@ import {
   IsEnum,
   ValidateIf,
 } from 'class-validator';
-import { ProductType } from '@generated/prisma/enums';
+import { ProductType } from '@generated/prisma/client';
 
 export class CreateProductDto {
   @IsString()

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { ProductType } from '@generated/prisma/enums';
+import { ProductType } from '@generated/prisma/client';
 
 @Controller('products')
 export class ProductsController {
