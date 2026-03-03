@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Prisma, ProductType } from '@generated/prisma/client';
+import { OrderStatus, Prisma, ProductType } from '@generated/prisma/client';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @Injectable()
@@ -99,17 +99,17 @@ export class OrdersService {
         throw new NotFoundException(`Order ${id} not found`);
       }
 
-      if (updateOrderStatusDto.status === 'CONFIRMED') {
-        if (order.status !== 'QUOTE') {
+      if (updateOrderStatusDto.status === OrderStatus.CONFIRMED) {
+        if (order.status !== OrderStatus.QUOTE) {
           throw new BadRequestException('Order status is not QUOTE');
         }
       }
 
-      if (updateOrderStatusDto.status === 'COMPLETED') {
-        if (order.status === 'COMPLETED') {
+      if (updateOrderStatusDto.status === OrderStatus.COMPLETED) {
+        if (order.status === OrderStatus.COMPLETED) {
           throw new BadRequestException('Order status is already COMPLETED');
         }
-        if (order.status === 'CANCELLED') {
+        if (order.status === OrderStatus.CANCELLED) {
           throw new BadRequestException('Order status is CANCELLED');
         }
 
@@ -138,5 +138,44 @@ export class OrdersService {
         data: { status: updateOrderStatusDto.status },
       });
     })
+  }
+
+  async findAll(query?: string, status?: OrderStatus) {
+    return this.prisma.order.findMany({
+      where: {
+        ...(status && { status }),
+        ...(query && {
+          OR: [
+            { code: { contains: query, mode: 'insensitive' }},
+            { note: { contains: query, mode: 'insensitive' }},
+            {
+              customer: {
+                OR: [
+                  { name: { contains: query, mode: 'insensitive' } },
+                  { phone: { contains: query } },
+                  { plateNumber: { contains: query, mode: 'insensitive' } },
+                ]
+              }
+            }
+          ],
+        })
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        customer: true,
+      }
+    })
+  }
+
+  async findOne(id: number) {
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        customer: true,
+        orderItems: {
+          include: { product: true },
+        },
+      },
+    });
   }
 }
